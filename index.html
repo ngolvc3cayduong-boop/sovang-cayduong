@@ -16,6 +16,7 @@
     
     <style>
         :root {
+            /* Hệ màu Royal Academic (Hải quân & Vàng Gold) */
             --navy-dark: #091321;
             --navy-main: #112A46;
             --navy-light: #1C4066;
@@ -52,27 +53,31 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px;
+            padding: 10px;
             box-sizing: border-box;
         }
 
-        /* ĐỊNH DẠNG KHUÔN GIẤY CHUẨN A4 */
+        /* ĐỊNH DẠNG KHUÔN GIẤY CHUẨN A4 - ĐÁP ỨNG MỌI MÀN HÌNH */
         .book-container {
             position: relative;
             
-            /* THIẾT LẬP KÍCH THƯỚC KHỔ GIẤY A4 (Rộng 21cm x Cao 29.7cm) */
-            /* 1. Luôn giữ đúng tỷ lệ 210:297 */
+            /* 1. Luôn giữ đúng tỷ lệ A4 Khổ dọc (210:297) */
             aspect-ratio: 210 / 297;
-            /* 2. Chiều rộng tối đa theo khổ thật (21cm) */
-            max-width: 21cm;
-            /* 3. Tự động thu phóng (Responsive) để không vượt ra khỏi màn hình (vừa chiều ngang và dọc) */
-            width: min(100%, calc((100vh - 110px) * 210 / 297));
+            
+            /* 2. Thuật toán tự động tính toán kích thước tối đa để không bao giờ tràn màn hình.
+                  - Nếu màn hình dọc (Điện thoại): Lấy chiều rộng 100%.
+                  - Nếu màn hình ngang (Máy tính, Tivi): Lấy chiều cao tối đa trừ đi không gian Toolbar, 
+                    sau đó nhân với tỷ lệ để ra chiều rộng tương ứng. */
+            width: min(100%, calc((100vh - 100px) * (210 / 297)));
+            
+            /* Giới hạn kích thước vật lý trên Tivi khổng lồ để chữ không bị kéo giãn quá mức */
+            max-width: 900px;
             height: auto;
             
             background: var(--paper-bg);
             box-shadow: 
-                -5px 0 15px rgba(0,0,0,0.5),
-                0 30px 60px -15px rgba(0, 0, 0, 0.7);
+                -5px 0 25px rgba(0,0,0,0.6),
+                0 30px 60px -15px rgba(0, 0, 0, 0.8);
             border-radius: 4px 12px 12px 4px;
             overflow: hidden;
             perspective: 2000px;
@@ -82,7 +87,9 @@
         .book-container::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 40px; height: 100%;
+            top: 0; left: 0; 
+            width: max(20px, 4%); /* Tự co giãn theo kích thước sách */
+            height: 100%;
             background: linear-gradient(to right, 
                 rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.1) 15%, 
                 rgba(0,0,0,0.05) 30%, rgba(255,255,255,0.2) 40%, 
@@ -97,7 +104,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             box-sizing: border-box;
             background-color: var(--paper-bg);
-            /* Texture vân giấy */
+            /* Texture vân giấy mỹ thuật */
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0; visibility: hidden;
             transform-origin: left center;
@@ -120,31 +127,33 @@
         /* Header của trang nội dung */
         .page-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 25px 40px 15px 50px;
+            /* Dùng % để lề tự động co giãn theo kích thước thiết bị */
+            padding: 5% 7% 3% 9%; 
             border-bottom: 2px solid var(--gold-light);
-            margin-bottom: 10px; position: relative; z-index: 2;
+            margin-bottom: 2%; position: relative; z-index: 2;
         }
 
         .header-logo {
-            width: 45px; height: 45px;
+            width: max(35px, 8%); 
+            aspect-ratio: 1/1;
             background-image: var(--logo-url);
             background-size: contain; background-repeat: no-repeat; background-position: center;
         }
 
         .header-text { text-align: right; flex-grow: 1; }
         .header-title {
-            font-family: 'Cinzel', serif; font-size: 14px; font-weight: 700;
+            font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
             color: var(--navy-main); letter-spacing: 1px; margin: 0;
         }
         .header-subtitle {
-            font-size: 11px; color: var(--gold-dark); text-transform: uppercase;
+            font-size: 0.8rem; color: var(--gold-dark); text-transform: uppercase;
             letter-spacing: 0.5px; margin-top: 3px;
         }
 
         /* Watermark Nền */
         .watermark {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 85%; height: 85%;
+            width: 75%; height: 75%;
             background-image: var(--logo-url); background-size: contain;
             background-repeat: no-repeat; background-position: center;
             opacity: 0.05; z-index: 0; filter: grayscale(100%);
@@ -153,7 +162,7 @@
         /* Lớp nội dung chi tiết */
         .content-layer {
             position: relative; z-index: 2; flex-grow: 1;
-            padding: 0 40px 40px 50px; display: flex; flex-direction: column;
+            padding: 0 7% 7% 9%; display: flex; flex-direction: column;
             overflow-y: auto;
         }
         .content-layer::-webkit-scrollbar { width: 4px; }
@@ -162,61 +171,62 @@
         /* Trang Bìa */
         .page-cover {
             background: linear-gradient(145deg, var(--navy-dark), var(--navy-main));
-            padding: 40px; align-items: center; justify-content: center; text-align: center;
+            padding: 8%; align-items: center; justify-content: center; text-align: center;
             background-image: radial-gradient(circle at 50% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 60%);
         }
         .cover-border {
-            position: absolute; top: 20px; left: 35px; right: 20px; bottom: 20px;
+            position: absolute; top: 4%; left: 6%; right: 4%; bottom: 4%;
             border: 2px solid var(--gold-main); outline: 1px solid var(--gold-main);
             outline-offset: 6px; z-index: 1; pointer-events: none;
         }
         .cover-border::before, .cover-border::after {
-            content: ''; position: absolute; width: 20px; height: 20px; border: 2px solid var(--gold-light);
+            content: ''; position: absolute; width: 25px; height: 25px; border: 2px solid var(--gold-light);
         }
         .cover-border::before { top: -6px; left: -6px; border-right: none; border-bottom: none; }
         .cover-border::after { bottom: -6px; right: -6px; border-left: none; border-top: none; }
 
         .cover-header-text {
-            font-size: 13px; font-weight: 600; color: var(--paper-bg); letter-spacing: 2px;
-            text-transform: uppercase; margin-bottom: 30px; position: relative; z-index: 2;
+            font-size: 1rem; font-weight: 600; color: var(--paper-bg); letter-spacing: 2px;
+            text-transform: uppercase; margin-bottom: 8%; position: relative; z-index: 2;
         }
         .cover-logo-wrapper {
-            width: 160px; height: 160px; background-color: white; border-radius: 50%;
-            padding: 10px; box-shadow: 0 0 0 4px var(--gold-main), 0 15px 35px rgba(0,0,0,0.5);
-            margin: 0 auto 30px; position: relative; z-index: 2;
+            width: 35%; max-width: 180px; min-width: 110px; aspect-ratio: 1/1;
+            background-color: white; border-radius: 50%;
+            padding: 2%; box-shadow: 0 0 0 4px var(--gold-main), 0 15px 35px rgba(0,0,0,0.5);
+            margin: 0 auto 8%; position: relative; z-index: 2;
         }
         .cover-logo-img {
             width: 100%; height: 100%; background-image: var(--logo-url);
             background-size: contain; background-repeat: no-repeat; background-position: center;
         }
         .cover-title {
-            font-family: 'Cinzel', serif; font-size: 38px; font-weight: 800; color: var(--gold-main);
-            margin: 0 0 10px 0; text-transform: uppercase; line-height: 1.2;
+            font-family: 'Cinzel', serif; font-size: 2.8rem; font-weight: 800; color: var(--gold-main);
+            margin: 0 0 3% 0; text-transform: uppercase; line-height: 1.2;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5); position: relative; z-index: 2;
             background: linear-gradient(to bottom, #FFF4D2, #D4AF37, #997A15);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .cover-subtitle {
-            font-family: 'Montserrat', sans-serif; font-size: 18px; color: var(--gold-light);
-            font-weight: 500; letter-spacing: 3px; margin-bottom: 40px; position: relative; z-index: 2;
+            font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: var(--gold-light);
+            font-weight: 500; letter-spacing: 3px; margin-bottom: 10%; position: relative; z-index: 2;
         }
         .cover-footer-text {
-            font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700;
+            font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
             color: var(--paper-bg); margin-top: auto; line-height: 1.6; position: relative; z-index: 2;
         }
 
         /* Thẻ MTQ */
         .donor-heading {
             font-family: 'Playfair Display', serif; color: var(--navy-main); text-align: center;
-            font-size: 26px; font-weight: 700; margin: 5px 0 25px; text-transform: uppercase; position: relative;
+            font-size: 1.8rem; font-weight: 700; margin: 2% 0 6%; text-transform: uppercase; position: relative;
         }
         .donor-heading::after {
             content: ''; display: block; width: 50px; height: 3px;
             background: var(--gold-main); margin: 15px auto 0; border-radius: 2px;
         }
         .donor-card {
-            background: #ffffff; border-radius: 12px; padding: 30px 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); margin-bottom: 25px;
+            background: #ffffff; border-radius: 12px; padding: 6%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); margin-bottom: 6%;
             border: 1px solid rgba(212, 175, 55, 0.3); position: relative;
         }
         .donor-card::before {
@@ -224,43 +234,43 @@
             background: linear-gradient(90deg, transparent, var(--gold-main), transparent);
         }
         .donor-name {
-            font-family: 'Playfair Display', serif; font-size: 22px; color: var(--gold-dark);
-            text-align: center; margin-bottom: 20px; text-transform: uppercase; font-weight: 700;
+            font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--gold-dark);
+            text-align: center; margin-bottom: 6%; text-transform: uppercase; font-weight: 700;
         }
         .info-grid { display: grid; gap: 12px; }
         .info-row {
             display: flex; justify-content: space-between; align-items: center;
             padding-bottom: 8px; border-bottom: 1px dashed var(--paper-darker);
         }
-        .info-label { font-weight: 500; color: var(--text-gray); font-size: 13px; text-transform: uppercase; }
-        .info-value { color: var(--navy-dark); font-weight: 600; font-size: 14px; text-align: right; }
-        .info-value.amount { color: #C0392B; font-size: 18px; font-weight: 700; font-family: 'Montserrat', sans-serif; }
+        .info-label { font-weight: 500; color: var(--text-gray); font-size: 0.9rem; text-transform: uppercase; }
+        .info-value { color: var(--navy-dark); font-weight: 600; font-size: 1rem; text-align: right; }
+        .info-value.amount { color: #C0392B; font-size: 1.3rem; font-weight: 700; font-family: 'Montserrat', sans-serif; }
         .donor-message {
             font-family: 'Playfair Display', serif; font-style: italic; text-align: center;
-            line-height: 1.7; color: var(--navy-light); font-size: 15px; padding: 0 15px; position: relative;
+            line-height: 1.7; color: var(--navy-light); font-size: 1.05rem; padding: 0 3%; position: relative;
         }
 
         /* Thư cảm ơn */
-        .page-letter .content-layer { padding: 10px 40px 40px 50px; justify-content: center; }
+        .page-letter .content-layer { justify-content: center; }
         .letter-title {
-            font-family: 'Cinzel', serif; color: var(--navy-main); font-size: 28px;
-            font-weight: 700; margin: 0 0 20px; text-align: center; border-bottom: 2px solid var(--gold-main); padding-bottom: 15px;
+            font-family: 'Cinzel', serif; color: var(--navy-main); font-size: 2rem;
+            font-weight: 700; margin: 0 0 5%; text-align: center; border-bottom: 2px solid var(--gold-main); padding-bottom: 3%;
         }
-        .letter-content { font-size: 14px; line-height: 1.8; text-align: justify; margin-bottom: 30px; }
+        .letter-content { font-size: 1rem; line-height: 1.8; text-align: justify; margin-bottom: 6%; }
         .letter-content p { margin-bottom: 12px; text-indent: 30px; }
 
         /* Lời mở đầu */
-        .page-intro .content-layer { padding: 20px 40px 40px 50px; justify-content: flex-start; }
+        .page-intro .content-layer { justify-content: flex-start; padding-top: 5%;}
         .intro-title {
-            font-family: 'Cinzel', serif; color: var(--navy-main); font-size: 26px;
-            font-weight: 800; margin: 0 0 25px; text-align: center; border-bottom: 2px solid var(--gold-main); padding-bottom: 15px; line-height: 1.4;
+            font-family: 'Cinzel', serif; color: var(--navy-main); font-size: 1.8rem;
+            font-weight: 800; margin: 0 0 6%; text-align: center; border-bottom: 2px solid var(--gold-main); padding-bottom: 3%; line-height: 1.4;
         }
         .intro-content { 
-            font-size: 14px; line-height: 1.8; text-align: justify; color: var(--navy-dark);
+            font-size: 1rem; line-height: 1.8; text-align: justify; color: var(--navy-dark);
             font-family: 'Montserrat', sans-serif;
         }
         .intro-content p { margin-bottom: 15px; text-indent: 30px; }
-        .intro-highlight { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--navy-main); text-align: center; margin: 25px 0; font-style: italic;}
+        .intro-highlight { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 600; color: var(--navy-main); text-align: center; margin: 6% 0; font-style: italic;}
 
         /* App Toolbar (Bottom) */
         .app-toolbar {
@@ -293,515 +303,4 @@
             border-radius: 12px; display: flex; flex-direction: column; overflow: hidden;
             box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s;
         }
-        .app-modal.open .modal-content { transform: translateY(0); }
-        .modal-header {
-            padding: 20px; background: var(--navy-main); color: white;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .modal-title { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 700; margin: 0; }
-        .close-btn { color: white; background: none; border: none; font-size: 20px; cursor: pointer; }
-        .modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; }
-
-        /* Search input */
-        .search-box {
-            width: 100%; padding: 12px 15px; border: 2px solid var(--paper-darker);
-            border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 14px;
-            margin-bottom: 15px; outline: none; transition: border-color 0.3s;
-        }
-        .search-box:focus { border-color: var(--gold-main); }
-
-        /* List items in modal */
-        .list-item {
-            padding: 15px; border-bottom: 1px solid var(--paper-darker);
-            cursor: pointer; transition: background 0.2s; display: flex; justify-content: space-between; align-items: center;
-        }
-        .list-item:hover { background: #f5f0e6; }
-        .list-name { font-weight: 600; color: var(--navy-dark); font-size: 14px; }
-        .list-page { font-size: 12px; color: var(--text-gray); font-family: 'Playfair Display', serif; font-weight: bold; }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .page-cover { padding: 25px; }
-            .cover-title { font-size: 28px; }
-            .donor-card { padding: 20px 15px; }
-            .donor-name { font-size: 18px; }
-            .content-layer { padding: 0 20px 20px 30px; }
-            .page-header { padding: 20px 20px 10px 30px; }
-            .app-toolbar { padding: 0 10px; }
-            .toolbar-btn span { display: none; }
-            .toolbar-btn i { font-size: 24px; margin-bottom: 0; }
-            .nav-group { gap: 10px; padding: 5px 10px; }
-            /* Căn lại chiều rộng container trên mobile nếu cần */
-            .book-container { max-width: 100%; } 
-        }
-    </style>
-</head>
-<body>
-
-    <div class="app-workspace">
-        <div class="book-container" id="book">
-            
-            <!-- TRANG 1: BÌA -->
-            <div class="page page-cover active" id="page-1" data-name="Trang bìa">
-                <div class="cover-border"></div>
-                <div class="cover-header-text">Sở Giáo Dục Và Đào Tạo TP. Cần Thơ</div>
-                <div class="cover-logo-wrapper"><div class="cover-logo-img"></div></div>
-                <h1 class="cover-title">Sổ Vàng<br>Quỹ Khuyến Học</h1>
-                <div class="cover-subtitle">NĂM HỌC 2025 - 2026</div>
-                <div class="cover-footer-text">
-                    TRƯỜNG THCS VÀ THPT CÂY DƯƠNG
-                    <span style="font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: 12px; color: #A0B3C6; display: block; margin-top: 5px;">(Xã Hiệp Hưng - Thành phố Cần Thơ)</span>
-                </div>
-            </div>
-
-            <!-- TRANG 2: LỜI MỞ ĐẦU -->
-            <div class="page page-intro" id="page-2" data-name="Lời mở đầu">
-                <div class="watermark"></div>
-                <div class="content-layer">
-                    <h2 class="intro-title">LỜI MỞ ĐẦU<br>SỔ VÀNG QUỸ KHUYẾN HỌC</h2>
-                    <div class="intro-content">
-                        <p>Trong sự nghiệp "trồng người", Trường THCS và THPT Cây Dương luôn nỗ lực không ngừng để kiến tạo một môi trường học tập, rèn luyện tốt nhất cho các em học sinh. Thế nhưng, trên hành trình thiêng liêng ấy, vẫn còn đó những ước mơ dang dở vì hoàn cảnh gia đình khó khăn, những tài năng chưa thể vươn xa vì thiếu thốn điều kiện vật chất.</p>
-                        
-                        <p>Thấu hiểu điều đó, Quỹ Khuyến học Trường THCS và THPT Cây Dương được duy trì với sứ mệnh tiếp sức đến trường, thắp sáng niềm tin và trao cơ hội cho mọi học sinh. Và sứ mệnh ấy chỉ có thể trọn vẹn khi có sự chung tay, góp sức từ cộng đồng.</p>
-                        
-                        <div class="intro-highlight">Sổ Vàng Quỹ Khuyến Học năm học 2025 - 2026 là nơi nhà trường trân trọng lưu giữ và vinh danh những tấm lòng vàng, những nghĩa cử cao đẹp của Quý mạnh thường quân, Quý cơ quan, doanh nghiệp, Quý phụ huynh và các thế hệ cựu học sinh.</div>
-                        
-                        <p>Mỗi sự đóng góp, dù lớn hay nhỏ, đều là một viên gạch hồng góp phần xây dựng tương lai tươi sáng cho các em. Đó không chỉ là sự hỗ trợ thiết thực về vật chất, mà còn là nguồn động viên tinh thần to lớn, gửi gắm niềm tin yêu và kỳ vọng vào thế hệ trẻ.</p>
-                        
-                        <p>Ban Giám hiệu nhà trường xin gửi lời tri ân sâu sắc nhất đến tất cả Quý vị. Kính chúc Quý vị luôn dồi dào sức khỏe, hạnh phúc và thành công. Mong rằng truyền thống "Tôn sư trọng đạo - Tương thân tương ái" sẽ tiếp tục được lan tỏa và nhân rộng trong những chặng đường sắp tới.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TRANG 3: MTQ 1 -->
-            <div class="page" id="page-3" data-name="DIEM-VINH CUU HS NK 2004-2007">
-                <div class="watermark"></div>
-                <div class="page-header">
-                    <div class="header-logo"></div>
-                    <div class="header-text">
-                        <h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3>
-                        <div class="header-subtitle">Năm học 2025 - 2026</div>
-                    </div>
-                </div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Tri Ân Tấm Lòng Vàng</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">DIEM-VINH CUU HS NK 2004-2007</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">5.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">12/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Nhà trường trân trọng ghi nhận và biết ơn sâu sắc sự đồng hành quý báu của Quý mạnh thường quân. Sự sẻ chia đầy ý nghĩa này sẽ tiếp thêm động lực cho nhiều thế hệ học sinh.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 4: MTQ 2 -->
-            <div class="page" id="page-4" data-name="ẨN DANH">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Ghi Nhận Đóng Góp</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">ẨN DANH</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">150.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">13/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Mỗi đóng góp dù nhỏ bé cũng là viên gạch vững chắc xây dựng tương lai tươi sáng cho học sinh. Xin chân thành cảm ơn tấm lòng vàng của Quý vị đã thắp lên ngọn lửa hiếu học.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 5: MTQ 3 -->
-            <div class="page" id="page-5" data-name="PH EM LÊ NGUYỄN TÚ TRÂN 7A7">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Tri Ân Tấm Lòng Vàng</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">PH EM LÊ NGUYỄN TÚ TRÂN 7A7</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">1.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">14/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Sự quan tâm và hỗ trợ từ Quý phụ huynh không chỉ là nguồn động viên vật chất mà còn là món quà tinh thần vô giá. Chúng tôi vô cùng trân quý và biết ơn.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 6: MTQ 4 -->
-            <div class="page" id="page-6" data-name="TÔ VĂN HẠNH">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Ghi Nhận Đóng Góp</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">TÔ VĂN HẠNH</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">1.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">14/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Hành trình gieo hạt tri thức trở nên trọn vẹn hơn nhờ sự sát cánh của Quý vị. Kính chúc Quý mạnh thường quân luôn dồi dào sức khỏe và tiếp tục lan tỏa giá trị tốt đẹp.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 7: MTQ 5 -->
-            <div class="page" id="page-7" data-name="NGUYỄN PHÚC HẬU">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Tri Ân Tấm Lòng Vàng</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">NGUYỄN PHÚC HẬU</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">5.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">16/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Sự đóng góp hào phóng của Quý vị là nguồn động lực to lớn giúp các em học sinh có thêm điều kiện học tập tốt nhất. Xin gửi lời tri ân sâu sắc nhất.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 8: MTQ 6 -->
-            <div class="page" id="page-8" data-name="LÊ THỊ HỒNG GẤM">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Ghi Nhận Đóng Góp</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">LÊ THỊ HỒNG GẤM</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">2.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">18/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Những tấm lòng nhân ái như Quý vị chính là nhịp cầu nối liền ước mơ của các em học sinh với hiện thực. Tập thể sư phạm nhà trường xin trân trọng ghi nhận.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 9: MTQ 7 -->
-            <div class="page" id="page-9" data-name="LÂM VĂN MÃI">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Tri Ân Tấm Lòng Vàng</h2>
-                    <div class="donor-card">
-                        <div class="donor-name" style="margin-bottom: 5px;">LÂM VĂN MÃI</div>
-                        <div style="text-align:center; color: var(--text-gray); font-size: 13px; margin-bottom: 20px;">12A1 NK 2001-2004</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">1.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">19/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Sự hướng về cội nguồn và hỗ trợ thế hệ đàn em đi sau của Cựu học sinh là niềm tự hào lớn lao. Nghĩa cử cao đẹp này sẽ thắp sáng tinh thần hiếu học.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 10: MTQ 8 -->
-            <div class="page" id="page-10" data-name="DANH BẢO">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Ghi Nhận Đóng Góp</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">DANH BẢO</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">5.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">20/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Xin gửi lời cảm ơn chân thành nhất đến Quý vị vì đã dang rộng vòng tay yêu thương, góp phần mang đến một môi trường học tập tốt đẹp hơn cho các em.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 11: MTQ 9 -->
-            <div class="page" id="page-11" data-name="NHÓM CỰU HS NK 2004-2007">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Tri Ân Tấm Lòng Vàng</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">NHÓM CỰU HS NK 2004-2007</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">10.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">20/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Sự chung tay đồng lòng của Tập thể Cựu học sinh không chỉ là món quà vô giá về vật chất mà còn là minh chứng rực rỡ cho tinh thần đoàn kết, hướng về mái trường xưa.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 12: MTQ 10 (HUYNH VAN DO) -->
-            <div class="page" id="page-12" data-name="HUYNH VAN DO">
-                <div class="watermark"></div>
-                <div class="page-header"><div class="header-logo"></div><div class="header-text"><h3 class="header-title">SỔ VÀNG QUỸ KHUYẾN HỌC</h3><div class="header-subtitle">Năm học 2025 - 2026</div></div></div>
-                <div class="content-layer">
-                    <h2 class="donor-heading">Ghi Nhận Đóng Góp</h2>
-                    <div class="donor-card">
-                        <div class="donor-name">HUYNH VAN DO</div>
-                        <div class="info-grid">
-                            <div class="info-row"><span class="info-label">Tài trợ</span><span class="info-value amount">3.000.000 VNĐ</span></div>
-                            <div class="info-row"><span class="info-label">Hình thức</span><span class="info-value">Chuyển khoản</span></div>
-                            <div class="info-row"><span class="info-label">Thời gian</span><span class="info-value">27/05/2026</span></div>
-                        </div>
-                    </div>
-                    <div class="donor-message">Sự đóng góp trân quý của Quý vị là nguồn động viên to lớn, tiếp thêm sức mạnh cho các em học sinh vững bước trên con đường tương lai. Xin chân thành cảm ơn tấm lòng vàng của Quý vị.</div>
-                </div>
-            </div>
-
-            <!-- TRANG 13: LỜI CẢM ƠN -->
-            <div class="page page-letter" id="page-13" data-name="Thư cảm ơn">
-                <div class="watermark"></div>
-                <div class="content-layer">
-                    <h2 class="letter-title">THƯ CẢM ƠN</h2>
-                    <div class="letter-content">
-                        <p><strong>Kính gửi Quý mạnh thường quân, Quý cơ quan, doanh nghiệp và các nhà hảo tâm,</strong></p>
-                        <p>Trong sự nghiệp "trồng người", Trường THCS và THPT Cây Dương luôn nỗ lực không ngừng để mang đến môi trường học tập tốt nhất cho học sinh. Hành trình thiêng liêng ấy sẽ gặp nhiều khó khăn nếu thiếu đi sự sẻ chia từ cộng đồng.</p>
-                        <p>Ban Giám hiệu nhà trường xin trân trọng gửi lời cảm ơn sâu sắc nhất đến Quý vị đã chung tay đóng góp cho Quỹ Khuyến học năm học 2025 – 2026. Những tấm lòng vàng của Quý vị không chỉ hỗ trợ thiết thực về vật chất, mà còn là nguồn động viên tinh thần to lớn, thắp sáng ước mơ cho các thế hệ học trò.</p>
-                        <p>Nhà trường hy vọng sẽ tiếp tục nhận được sự quan tâm của Quý vị trong tương lai. Kính chúc Quý vị cùng gia đình luôn dồi dào sức khỏe, bình an và hạnh phúc.</p>
-                    </div>
-                    <div style="text-align: right; margin-top: auto;">
-                        <p style="margin:0">Trân trọng,</p>
-                        <p style="font-family:'Playfair Display', serif; font-weight:700; color:var(--navy-dark); font-size:16px; margin:15px 0 5px;">BAN GIÁM HIỆU</p>
-                        <p style="font-family:'Playfair Display', serif; font-weight:700; font-size:14px; margin:0;">TRƯỜNG THCS VÀ THPT CÂY DƯƠNG</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- App Toolbar -->
-    <div class="app-toolbar">
-        <button class="toolbar-btn" onclick="openModal('menuModal')">
-            <i class="fa-solid fa-list-ul"></i>
-            <span>Mục lục</span>
-        </button>
-        <button class="toolbar-btn" onclick="openModal('searchModal')">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <span>Tìm kiếm</span>
-        </button>
-        
-        <div class="nav-group">
-            <button class="toolbar-btn" id="prevBtn" onclick="changePage(-1)" disabled style="min-width:40px">
-                <i class="fa-solid fa-chevron-left"></i>
-            </button>
-            <div class="page-counter"><span id="pageNum">1</span>/<span id="totalNum">13</span></div>
-            <button class="toolbar-btn" id="nextBtn" onclick="changePage(1)" style="min-width:40px">
-                <i class="fa-solid fa-chevron-right"></i>
-            </button>
-        </div>
-
-        <button class="toolbar-btn" id="soundBtn" onclick="toggleSound()">
-            <i class="fa-solid fa-volume-high"></i>
-            <span>Âm thanh</span>
-        </button>
-        <button class="toolbar-btn" onclick="toggleFullScreen()">
-            <i class="fa-solid fa-expand"></i>
-            <span>Toàn màn</span>
-        </button>
-    </div>
-
-    <!-- Modal: Mục lục -->
-    <div class="app-modal" id="menuModal" onclick="closeModal(event, 'menuModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fa-solid fa-book-open mr-2"></i> Danh mục trang</h3>
-                <button class="close-btn" onclick="closeModal(null, 'menuModal')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="tocList"></div>
-        </div>
-    </div>
-
-    <!-- Modal: Tìm kiếm -->
-    <div class="app-modal" id="searchModal" onclick="closeModal(event, 'searchModal')">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fa-solid fa-magnifying-glass mr-2"></i> Tra cứu Sổ Vàng</h3>
-                <button class="close-btn" onclick="closeModal(null, 'searchModal')"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" class="search-box" id="searchInput" placeholder="Nhập tên mạnh thường quân..." onkeyup="filterSearch()">
-                <div id="searchResultList"></div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let currentPage = 1;
-        const totalPages = 13; // Cập nhật tổng số trang là 13
-        let soundEnabled = true;
-
-        // --- Logic lật trang ---
-        function changePage(direction) {
-            if(direction > 0 && currentPage >= totalPages) return;
-            if(direction < 0 && currentPage <= 1) return;
-
-            const currentElement = document.getElementById(`page-${currentPage}`);
-            currentElement.classList.remove('active');
-            if (direction > 0) {
-                currentElement.classList.add('prev-out');
-            } else {
-                const prevElement = document.getElementById(`page-${currentPage-1}`);
-                if(prevElement) prevElement.classList.remove('prev-out');
-            }
-
-            currentPage += direction;
-            const nextElement = document.getElementById(`page-${currentPage}`);
-            nextElement.classList.remove('prev-out');
-            nextElement.classList.add('active');
-            
-            updateUI();
-            if(soundEnabled) playFlipSound();
-        }
-
-        function goToPage(pageNum) {
-            if(pageNum === currentPage) return;
-            
-            // Ẩn tất cả và thiết lập đúng hướng lật
-            for(let i=1; i<=totalPages; i++){
-                let p = document.getElementById(`page-${i}`);
-                p.classList.remove('active');
-                if(i < pageNum) p.classList.add('prev-out');
-                else p.classList.remove('prev-out');
-            }
-            
-            currentPage = pageNum;
-            document.getElementById(`page-${currentPage}`).classList.add('active');
-            updateUI();
-            if(soundEnabled) playFlipSound();
-            
-            // Đóng tất cả modal
-            document.querySelectorAll('.app-modal').forEach(m => m.classList.remove('open'));
-        }
-
-        function updateUI() {
-            document.getElementById('pageNum').innerText = currentPage;
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = currentPage === totalPages;
-        }
-
-        // --- Khởi tạo dữ liệu cho Mục lục & Tìm kiếm ---
-        const pageData = [];
-        for(let i=1; i<=totalPages; i++){
-            let el = document.getElementById(`page-${i}`);
-            if(el) {
-                let name = el.getAttribute('data-name');
-                pageData.push({ page: i, name: name });
-            }
-        }
-
-        function renderList(containerId, data) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            if(data.length === 0) {
-                container.innerHTML = '<div class="p-4 text-center text-gray-500">Không tìm thấy kết quả.</div>';
-                return;
-            }
-            data.forEach(item => {
-                let div = document.createElement('div');
-                div.className = 'list-item';
-                div.innerHTML = `<span class="list-name">${item.name}</span> <span class="list-page">Trang ${item.page}</span>`;
-                div.onclick = () => goToPage(item.page);
-                container.appendChild(div);
-            });
-        }
-
-        // Khởi tạo hiển thị ban đầu
-        renderList('tocList', pageData);
-        renderList('searchResultList', pageData);
-
-        function filterSearch() {
-            let query = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = pageData.filter(item => item.name.toLowerCase().includes(query));
-            renderList('searchResultList', filtered);
-        }
-
-        // --- Logic Modals ---
-        function openModal(id) {
-            document.getElementById(id).classList.add('open');
-            if(id === 'searchModal') {
-                setTimeout(() => document.getElementById('searchInput').focus(), 100);
-            }
-        }
-
-        function closeModal(e, id) {
-            if(e && e.target.id !== id) return;
-            document.getElementById(id).classList.remove('open');
-        }
-
-        // --- Web Audio API: Âm thanh lật sách ---
-        function playFlipSound() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if(!AudioContext) return;
-                const ctx = new AudioContext();
-                
-                const bufferSize = ctx.sampleRate * 0.15; // 0.15s
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
-                }
-                
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
-                
-                const filter = ctx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.value = 1000;
-                
-                const gain = ctx.createGain();
-                gain.gain.setValueAtTime(0.5, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-                
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(ctx.destination);
-                
-                noise.start();
-            } catch(e) { console.log('Audio error:', e); }
-        }
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById('soundBtn');
-            if(soundEnabled) {
-                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i><span style="font-size:11px">Âm thanh</span>';
-                btn.classList.remove('text-gray-500');
-                playFlipSound();
-            } else {
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i><span style="font-size:11px">Tắt âm</span>';
-                btn.classList.add('text-gray-500');
-            }
-        }
-
-        // --- Logic Toàn màn hình ---
-        function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Lỗi fullscreen: ${err.message}`);
-                });
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                }
-            }
-        }
-        
-        // Khởi động UI
-        updateUI();
-    </script>
-</body>
-</html>
+        .
