@@ -26,7 +26,7 @@
             --paper-darker: #F0EAE1;
             --text-dark: #2C3E50;
             --text-gray: #556B8D;
-            /* Lấy logo trực tiếp từ ổ D trên máy tính */
+            /* Đường dẫn lấy logo từ ổ D trên máy tính */
             --logo-url: url('file:///D:/Logo%20Truong%20THCS-%20THPT%20Cay%20Duong.jpg');
         }
 
@@ -56,12 +56,19 @@
             box-sizing: border-box;
         }
 
+        /* ĐỊNH DẠNG KHUÔN GIẤY CHUẨN A4 */
         .book-container {
-            width: 100%;
-            max-width: 550px;
-            height: 100%;
-            max-height: 780px;
             position: relative;
+            
+            /* THIẾT LẬP KÍCH THƯỚC KHỔ GIẤY A4 (Rộng 21cm x Cao 29.7cm) */
+            /* 1. Luôn giữ đúng tỷ lệ 210:297 */
+            aspect-ratio: 210 / 297;
+            /* 2. Chiều rộng tối đa theo khổ thật (21cm) */
+            max-width: 21cm;
+            /* 3. Tự động thu phóng (Responsive) để không vượt ra khỏi màn hình (vừa chiều ngang và dọc) */
+            width: min(100%, calc((100vh - 110px) * 210 / 297));
+            height: auto;
+            
             background: var(--paper-bg);
             box-shadow: 
                 -5px 0 15px rgba(0,0,0,0.5),
@@ -84,11 +91,13 @@
             border-left: 2px solid rgba(0,0,0,0.2);
         }
 
+        /* Cấu hình từng trang lật */
         .page {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             box-sizing: border-box;
             background-color: var(--paper-bg);
+            /* Texture vân giấy */
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
             opacity: 0; visibility: hidden;
             transform-origin: left center;
@@ -108,7 +117,7 @@
             transform: rotateY(20deg) scale(0.95) translateX(-20px);
         }
 
-        /* Header của từng trang */
+        /* Header của trang nội dung */
         .page-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 25px 40px 15px 50px;
@@ -132,7 +141,7 @@
             letter-spacing: 0.5px; margin-top: 3px;
         }
 
-        /* Watermark */
+        /* Watermark Nền */
         .watermark {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 85%; height: 85%;
@@ -141,11 +150,11 @@
             opacity: 0.05; z-index: 0; filter: grayscale(100%);
         }
 
-        /* Nội dung chi tiết */
+        /* Lớp nội dung chi tiết */
         .content-layer {
             position: relative; z-index: 2; flex-grow: 1;
             padding: 0 40px 40px 50px; display: flex; flex-direction: column;
-            overflow-y: auto; /* Cho phép cuộn nội dung nếu dài */
+            overflow-y: auto;
         }
         .content-layer::-webkit-scrollbar { width: 4px; }
         .content-layer::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 10px; }
@@ -240,7 +249,7 @@
         .letter-content { font-size: 14px; line-height: 1.8; text-align: justify; margin-bottom: 30px; }
         .letter-content p { margin-bottom: 12px; text-indent: 30px; }
 
-        /* Style cho trang Lời mở đầu */
+        /* Lời mở đầu */
         .page-intro .content-layer { padding: 20px 40px 40px 50px; justify-content: flex-start; }
         .intro-title {
             font-family: 'Cinzel', serif; color: var(--navy-main); font-size: 26px;
@@ -310,6 +319,7 @@
         .list-name { font-weight: 600; color: var(--navy-dark); font-size: 14px; }
         .list-page { font-size: 12px; color: var(--text-gray); font-family: 'Playfair Display', serif; font-weight: bold; }
 
+        /* Responsive */
         @media (max-width: 600px) {
             .page-cover { padding: 25px; }
             .cover-title { font-size: 28px; }
@@ -318,9 +328,11 @@
             .content-layer { padding: 0 20px 20px 30px; }
             .page-header { padding: 20px 20px 10px 30px; }
             .app-toolbar { padding: 0 10px; }
-            .toolbar-btn span { display: none; /* Ẩn text nút trên mobile */ }
+            .toolbar-btn span { display: none; }
             .toolbar-btn i { font-size: 24px; margin-bottom: 0; }
             .nav-group { gap: 10px; padding: 5px 10px; }
+            /* Căn lại chiều rộng container trên mobile nếu cần */
+            .book-container { max-width: 100%; } 
         }
     </style>
 </head>
@@ -597,7 +609,7 @@
         </button>
         <button class="toolbar-btn" onclick="toggleFullScreen()">
             <i class="fa-solid fa-expand"></i>
-            <span>Toàn màn hình</span>
+            <span>Toàn màn</span>
         </button>
     </div>
 
@@ -608,9 +620,7 @@
                 <h3 class="modal-title"><i class="fa-solid fa-book-open mr-2"></i> Danh mục trang</h3>
                 <button class="close-btn" onclick="closeModal(null, 'menuModal')"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body" id="tocList">
-                <!-- Sẽ được điền tự động bằng JS -->
-            </div>
+            <div class="modal-body" id="tocList"></div>
         </div>
     </div>
 
@@ -623,17 +633,14 @@
             </div>
             <div class="modal-body">
                 <input type="text" class="search-box" id="searchInput" placeholder="Nhập tên mạnh thường quân..." onkeyup="filterSearch()">
-                <div id="searchResultList">
-                    <!-- Sẽ được điền tự động bằng JS -->
-                </div>
+                <div id="searchResultList"></div>
             </div>
         </div>
     </div>
 
     <script>
         let currentPage = 1;
-        // Tổng số trang đã được cập nhật thành 13 (Gồm bìa, mở đầu, 10 MTQ, cảm ơn)
-        const totalPages = 13; 
+        const totalPages = 13; // Cập nhật tổng số trang là 13
         let soundEnabled = true;
 
         // --- Logic lật trang ---
@@ -652,7 +659,7 @@
 
             currentPage += direction;
             const nextElement = document.getElementById(`page-${currentPage}`);
-            nextElement.classList.remove('prev-out'); // Đảm bảo reset trạng thái
+            nextElement.classList.remove('prev-out');
             nextElement.classList.add('active');
             
             updateUI();
@@ -662,7 +669,7 @@
         function goToPage(pageNum) {
             if(pageNum === currentPage) return;
             
-            // Ẩn tất cả
+            // Ẩn tất cả và thiết lập đúng hướng lật
             for(let i=1; i<=totalPages; i++){
                 let p = document.getElementById(`page-${i}`);
                 p.classList.remove('active');
@@ -689,8 +696,10 @@
         const pageData = [];
         for(let i=1; i<=totalPages; i++){
             let el = document.getElementById(`page-${i}`);
-            let name = el.getAttribute('data-name');
-            pageData.push({ page: i, name: name });
+            if(el) {
+                let name = el.getAttribute('data-name');
+                pageData.push({ page: i, name: name });
+            }
         }
 
         function renderList(containerId, data) {
@@ -709,7 +718,7 @@
             });
         }
 
-        // Khởi tạo TOC
+        // Khởi tạo hiển thị ban đầu
         renderList('tocList', pageData);
         renderList('searchResultList', pageData);
 
@@ -723,24 +732,23 @@
         function openModal(id) {
             document.getElementById(id).classList.add('open');
             if(id === 'searchModal') {
-                document.getElementById('searchInput').focus();
+                setTimeout(() => document.getElementById('searchInput').focus(), 100);
             }
         }
 
         function closeModal(e, id) {
-            if(e && e.target.id !== id) return; // Chỉ đóng khi click ra ngoài hoặc nút X
+            if(e && e.target.id !== id) return;
             document.getElementById(id).classList.remove('open');
         }
 
-        // --- Web Audio API: Tạo âm thanh lật sách chân thực ---
+        // --- Web Audio API: Âm thanh lật sách ---
         function playFlipSound() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if(!AudioContext) return;
                 const ctx = new AudioContext();
                 
-                // Tạo tiếng "xoẹt" nhẹ (White noise + Envelope)
-                const bufferSize = ctx.sampleRate * 0.15; // 0.15 giây
+                const bufferSize = ctx.sampleRate * 0.15; // 0.15s
                 const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
                 const data = buffer.getChannelData(0);
                 for (let i = 0; i < bufferSize; i++) {
@@ -750,12 +758,10 @@
                 const noise = ctx.createBufferSource();
                 noise.buffer = buffer;
                 
-                // Lọc tần số để nghe giống tiếng giấy (Bandpass filter)
                 const filter = ctx.createBiquadFilter();
                 filter.type = 'bandpass';
                 filter.frequency.value = 1000;
                 
-                // Điều khiển âm lượng (Mờ dần)
                 const gain = ctx.createGain();
                 gain.gain.setValueAtTime(0.5, ctx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
@@ -772,11 +778,11 @@
             soundEnabled = !soundEnabled;
             const btn = document.getElementById('soundBtn');
             if(soundEnabled) {
-                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i><span>Âm thanh</span>';
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i><span style="font-size:11px">Âm thanh</span>';
                 btn.classList.remove('text-gray-500');
-                playFlipSound(); // Phát thử
+                playFlipSound();
             } else {
-                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i><span>Tắt âm</span>';
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i><span style="font-size:11px">Tắt âm</span>';
                 btn.classList.add('text-gray-500');
             }
         }
@@ -794,7 +800,7 @@
             }
         }
         
-        // Cập nhật giao diện ban đầu
+        // Khởi động UI
         updateUI();
     </script>
 </body>
